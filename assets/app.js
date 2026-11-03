@@ -1,9 +1,13 @@
 (function () {
   'use strict';
 
-  var LANG_LABEL = { html: 'HTML', css: 'CSS' };
+  var LANGS = ['html', 'css', 'js', 'ts'];
+  var LANG_LABEL = { html: 'HTML', css: 'CSS', js: 'JS', ts: 'TS' };
+  var LANG_NAME = { html: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript' };
+  var PRISM_LANG = { html: 'markup', css: 'css', js: 'javascript', ts: 'typescript' };
+  var usedIds = {};
   var data = (window.CHEAT || []).map(function (e, i) {
-    e.id = e.id || slug(e.lang + '-' + e.name);
+    e.id = e.id || uniqueId(e.lang, e.name);
     e._order = i;
     e._hay = [e.name, e.desc, e.group, (e.keywords || []).join(' ')].join(' ').toLowerCase();
     return e;
@@ -16,6 +20,19 @@
   var input = $('#q');
 
   // ---------- Hilfsfunktionen ----------
+  // Operatoren wie "===" oder "&&" haben keine Buchstaben; dann Zeichencodes verwenden.
+  function uniqueId(lang, name) {
+    var base = slug(name);
+    if (!/[a-z0-9]/.test(base)) {
+      base = 'op-' + Array.prototype.map.call(name.replace(/\s+/g, ''), function (c) { return c.charCodeAt(0).toString(16); }).join('');
+    }
+    var id = lang + '-' + base;
+    var n = 2;
+    while (usedIds[id]) id = lang + '-' + base + '-' + n++;
+    usedIds[id] = true;
+    return id;
+  }
+
   function slug(s) {
     return s.toLowerCase()
       .replace(/</g, '').replace(/>/g, '')
@@ -69,9 +86,9 @@
   // ---------- Sidebar ----------
   function renderSidebar() {
     var html = '';
-    ['html', 'css'].forEach(function (lang) {
+    LANGS.forEach(function (lang) {
       if (state.lang !== 'all' && state.lang !== lang) return;
-      html += '<div class="nav-lang" data-lang="' + lang + '"><h2>' + LANG_LABEL[lang] + '</h2><ul>';
+      html += '<div class="nav-lang" data-lang="' + lang + '"><h2>' + LANG_NAME[lang] + '</h2><ul>';
       groupsOf(lang).forEach(function (g) {
         html += '<li><a href="#g-' + slug(lang + '-' + g.name) + '">' + esc(g.name) + '<span>' + g.items.length + '</span></a></li>';
       });
@@ -83,7 +100,7 @@
   // ---------- Liste ----------
   function renderList() {
     var q = state.query.trim().toLowerCase();
-    var langs = state.lang === 'all' ? ['html', 'css'] : [state.lang];
+    var langs = state.lang === 'all' ? LANGS : [state.lang];
     var frag = '';
     var total = 0;
 
@@ -134,8 +151,7 @@
   }
 
   function codeBlock(code, lang) {
-    var prism = lang === 'css' ? 'css' : 'markup';
-    return '<div class="code"><pre><code class="language-' + prism + '">' + esc(code) + '</code></pre>' +
+    return '<div class="code"><pre><code class="language-' + (PRISM_LANG[lang] || 'markup') + '">' + esc(code) + '</code></pre>' +
       '<button type="button" class="copy-btn">Kopieren</button></div>';
   }
 
@@ -164,8 +180,10 @@
     if (e.example) {
       h += '<h3>Beispiel</h3>' + codeBlock(e.example, e.exampleLang || e.lang);
     }
-    if (e.demo) {
-      h += '<div class="preview-wrap"><button type="button" class="preview-btn" aria-expanded="false">Live-Vorschau zeigen</button></div>';
+    if (e.run) {
+      h += '<div class="preview-wrap"><button type="button" class="preview-btn" aria-expanded="false" data-label="Code ausführen">Code ausführen</button></div>';
+    } else if (e.demo) {
+      h += '<div class="preview-wrap"><button type="button" class="preview-btn" aria-expanded="false" data-label="Live-Vorschau zeigen">Live-Vorschau zeigen</button></div>';
     }
     if (e.tip) h += '<p class="tip">' + inline(e.tip) + '</p>';
 
@@ -176,7 +194,7 @@
         return t ? '<a href="#' + t.id + '">' + esc(r) + '</a>' : '<code>' + esc(r) + '</code>';
       }).join(', ') + '</span>');
     }
-    if (e.mdn) foot.push('<a href="' + esc(e.mdn) + '" target="_blank" rel="noopener">MDN-Dokumentation</a>');
+    if (e.mdn) foot.push('<a href="' + esc(e.mdn) + '" target="_blank" rel="noopener">' + (/typescriptlang\.org/.test(e.mdn) ? 'TypeScript-Dokumentation' : 'MDN-Dokumentation') + '</a>');
     if (foot.length) h += '<div class="entry-foot">' + foot.join('') + '</div>';
 
     return h + '</div>';
@@ -189,7 +207,11 @@
       data.forEach(function (e) { byName[e.lang + '|' + e.name.toLowerCase()] = e; });
     }
     var n = name.toLowerCase();
-    return byName[lang + '|' + n] || byName[(lang === 'html' ? 'css' : 'html') + '|' + n] || null;
+    if (byName[lang + '|' + n]) return byName[lang + '|' + n];
+    for (var i = 0; i < LANGS.length; i++) {
+      if (byName[LANGS[i] + '|' + n]) return byName[LANGS[i] + '|' + n];
+    }
+    return null;
   }
 
   function fill(details) {
@@ -201,10 +223,32 @@
     if (window.Prism) details.querySelectorAll('pre code').forEach(function (c) { Prism.highlightElement(c); });
   }
 
+  // Fängt console.* und Fehler ab und schreibt sie in die Konsole der Vorschau.
+  var CONSOLE_SHIM = '(function(){var o=document.getElementById("__out");' +
+    'function f(v){if(typeof v==="string")return v;if(v===undefined)return "undefined";if(typeof v==="function")return v.toString().split("\\n")[0];' +
+    'if(typeof v==="bigint")return v+"n";if(typeof v==="symbol")return v.toString();' +
+    'if(v instanceof Error)return v.name+": "+v.message;if(v instanceof Map)return "Map("+v.size+") "+f(Array.from(v));' +
+    'if(v instanceof Set)return "Set("+v.size+") "+f(Array.from(v));if(typeof Node!=="undefined"&&v instanceof Node)return "<"+(v.nodeName||"").toLowerCase()+">";' +
+    'try{var s=JSON.stringify(v);return s===undefined?String(v):s}catch(e){return String(v)}}' +
+    'function w(cls,args){var l=document.createElement("div");l.className=cls;l.textContent=Array.prototype.map.call(args,f).join(" ");o.appendChild(l)}' +
+    '["log","info","debug","table","dir"].forEach(function(k){console[k]=function(){w("log",arguments)}});' +
+    'console.warn=function(){w("warn",arguments)};console.error=function(){w("err",arguments)};' +
+    'window.onerror=function(m){w("err",["Fehler: "+m]);return true};' +
+    'window.addEventListener("unhandledrejection",function(e){w("err",["Unbehandelte Promise-Ablehnung: "+f(e.reason)])});})();';
+
   function demoDoc(e) {
-    return '<!doctype html><html><head><meta charset="utf-8"><style>' +
+    var base = '<!doctype html><html><head><meta charset="utf-8"><style>' +
       'body{font-family:system-ui,sans-serif;margin:12px;color:#1e2433;background:#fff;line-height:1.5}' +
-      '</style></head><body>' + e.demo + '</body></html>';
+      '#__out{font:13px/1.6 Consolas,ui-monospace,monospace;white-space:pre-wrap;margin-top:8px}' +
+      '#__out:empty::before{content:"(keine Konsolenausgabe)";color:#8a92a3}' +
+      '#__out div{padding:2px 0;border-bottom:1px solid #eef0f4}#__out .warn{color:#8a6100}#__out .err{color:#c0262d}' +
+      '</style></head><body>';
+    if (!e.run) return base + e.demo + '</body></html>';
+    var code = e.example.replace(/<\/script/gi, '<\\/script');
+    return base + (e.demo || '') +
+      '<div id="__out" role="log"></div>' +
+      '<script>' + CONSOLE_SHIM + '<\/script>' +
+      '<script type="module">' + code + '\n<\/script></body></html>';
   }
 
   // ---------- Ereignisse ----------
@@ -231,17 +275,18 @@
       var frame = wrap.querySelector('iframe');
       if (frame) {
         frame.remove();
-        pv.textContent = 'Live-Vorschau zeigen';
+        pv.textContent = pv.dataset.label;
         pv.setAttribute('aria-expanded', 'false');
       } else {
         var e = data.find(function (x) { return x.id === pv.closest('details').id; });
         frame = document.createElement('iframe');
         frame.className = 'preview';
         frame.title = 'Vorschau: ' + e.name;
-        frame.setAttribute('sandbox', '');
+        // Skripte nur für ausführbare Beispiele; ohne allow-same-origin bleibt der Code isoliert.
+        frame.setAttribute('sandbox', e.run ? 'allow-scripts allow-modals' : '');
         frame.srcdoc = demoDoc(e);
         wrap.appendChild(frame);
-        pv.textContent = 'Vorschau ausblenden';
+        pv.textContent = e.run ? 'Ausgabe schließen' : 'Vorschau ausblenden';
         pv.setAttribute('aria-expanded', 'true');
       }
     }

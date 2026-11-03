@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HTML &amp; CSS Cheat Sheet</title>
-  <meta name="description" content="Nachschlagewerk für HTML-Elemente, Attribute, CSS-Eigenschaften, Selektoren und mehr – mit Beschreibung, Syntax und Beispielen.">
+  <title>Web Cheat Sheet</title>
+  <meta name="description" content="Nachschlagewerk für HTML, CSS, JavaScript und TypeScript – mit Beschreibung, Syntax und Beispielen.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -20,13 +20,13 @@
   <header class="top">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
-      <span class="brand-name">HTML &amp; CSS<span class="brand-sub">Nachschlagewerk</span></span>
+      <span class="brand-name">Web Cheat Sheet<span class="brand-sub">Nachschlagewerk</span></span>
     </div>
 
     <div class="search">
       <label for="q" class="visually-hidden">Suchen</label>
       <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Element, Attribut oder Eigenschaft suchen, z. B. flex, &lt;img&gt;, :hover" autocomplete="off" spellcheck="false">
+      <input id="q" type="search" placeholder="Suchen, z. B. flex, &lt;img&gt;, :hover, map(), Partial" autocomplete="off" spellcheck="false">
       <kbd class="search-key" aria-hidden="true">/</kbd>
     </div>
 
@@ -35,6 +35,8 @@
         <button type="button" role="radio" data-lang="all" aria-checked="true">Alle</button>
         <button type="button" role="radio" data-lang="html" aria-checked="false">HTML</button>
         <button type="button" role="radio" data-lang="css" aria-checked="false">CSS</button>
+        <button type="button" role="radio" data-lang="js" aria-checked="false" title="JavaScript">JS</button>
+        <button type="button" role="radio" data-lang="ts" aria-checked="false" title="TypeScript">TS</button>
       </div>
       <button type="button" class="icon-btn" id="theme-toggle" aria-label="Farbschema wechseln" title="Hell / Dunkel">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -73,8 +75,16 @@
   <script src="data/css-typography-color.js"></script>
   <script src="data/css-effects-motion.js"></script>
   <script src="data/css-at-rules-values.js"></script>
+  <script src="data/js-basics.js"></script>
+  <script src="data/js-functions-objects.js"></script>
+  <script src="data/js-builtins.js"></script>
+  <script src="data/js-async-browser.js"></script>
+  <script src="data/js-dom-events.js"></script>
+  <script src="data/ts-basics.js"></script>
+  <script src="data/ts-advanced.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" data-manual></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

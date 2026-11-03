@@ -1,13 +1,13 @@
-# HTML & CSS Cheat Sheet
+# Web Cheat Sheet
 
-Persönliches Nachschlagewerk für HTML-Elemente, Attribute, CSS-Eigenschaften, Selektoren, At-Regeln, Einheiten und Funktionen. Jeder Eintrag hat eine Kurzbeschreibung, eine Erklärung, Syntax, mögliche Werte, ein kopierbares Beispiel und bei visuellen Themen eine Live-Vorschau.
+Persönliches Nachschlagewerk für HTML, CSS, JavaScript und TypeScript. Jeder Eintrag hat eine Kurzbeschreibung, eine Erklärung, Syntax, mögliche Werte und ein kopierbares Beispiel. Visuelle HTML/CSS-Themen haben eine Live-Vorschau, JavaScript-Beispiele lassen sich mit „Code ausführen“ in einer Sandbox starten (Konsolenausgabe direkt darunter).
 
 ## Benutzen
 
 `index.html` im Browser öffnen. Kein Build, kein Server nötig.
 
 - `/` springt in die Suche, `Esc` leert sie
-- Oben zwischen **Alle**, **HTML** und **CSS** filtern
+- Oben zwischen **Alle**, **HTML**, **CSS**, **JS** und **TS** filtern
 - Eintrag anklicken zum Aufklappen; die Adresse (`#css-display`) lässt sich als Lesezeichen speichern
 - Hell/Dunkel über den Mond-Knopf
 

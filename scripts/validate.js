@@ -31,7 +31,14 @@ const str = (v) => typeof v === 'string' && v.trim().length > 0;
 data.forEach((e, i) => {
   const where = `#${i} ${e && e.name}`;
   if (!e || typeof e !== 'object') return errors.push(`${where}: kein Objekt`);
-  if (!['html', 'css'].includes(e.lang)) errors.push(`${where}: lang muss "html" oder "css" sein`);
+  if (!['html', 'css', 'js', 'ts'].includes(e.lang)) errors.push(`${where}: lang muss "html", "css", "js" oder "ts" sein`);
+  if (e.run !== undefined && e.run !== true) errors.push(`${where}: run ist entweder true oder fehlt`);
+  if (e.run && e.lang !== 'js') errors.push(`${where}: run nur bei lang "js" (TypeScript läuft nicht im Browser)`);
+  if (e.run && /^\s*(import|export)\s/m.test(e.example)) errors.push(`${where}: run-Beispiel darf kein import/export enthalten`);
+  if (e.run) {
+    // Läuft im Browser als Modul; import.meta ist in vm.Script nicht erlaubt, daher ersetzen.
+    try { new vm.Script(`(async () => {\n${e.example.replace(/\bimport\.meta\b/g, '({})')}\n})`); } catch (err) { errors.push(`${where}: run-Beispiel hat Syntaxfehler: ${err.message}`); }
+  }
   for (const k of ['group', 'name', 'desc', 'details', 'example']) {
     if (!str(e[k])) errors.push(`${where}: Feld "${k}" fehlt`);
   }
@@ -43,10 +50,11 @@ data.forEach((e, i) => {
   for (const k of ['keywords', 'related']) {
     if (e[k] !== undefined && !(Array.isArray(e[k]) && e[k].every(str))) errors.push(`${where}: ${k} muss ein String-Array sein`);
   }
+  if (e.exampleLang !== undefined && !['html', 'css', 'js', 'ts'].includes(e.exampleLang)) errors.push(`${where}: exampleLang ungültig`);
   for (const k of ['syntax', 'demo', 'tip', 'mdn', 'initial', 'display', 'exampleLang']) {
     if (e[k] !== undefined && !str(e[k])) errors.push(`${where}: ${k} muss ein nicht-leerer String sein`);
   }
-  if (e.mdn && !/^https:\/\/developer\.mozilla\.org\//.test(e.mdn)) errors.push(`${where}: mdn muss auf developer.mozilla.org zeigen`);
+  if (e.mdn && !/^https:\/\/(developer\.mozilla\.org|www\.typescriptlang\.org)\//.test(e.mdn)) errors.push(`${where}: mdn muss auf developer.mozilla.org oder typescriptlang.org zeigen`);
   if (e.demo && /<script/i.test(e.demo)) errors.push(`${where}: demo darf kein <script> enthalten`);
   const key = `${e.lang}|${String(e.name).toLowerCase()}`;
   if (seen.has(key)) errors.push(`${where}: doppelt (schon bei #${seen.get(key)})`);
