@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML &amp; CSS Cheat Sheet</title>
+  <meta name="description" content="Nachschlagewerk für HTML-Elemente, Attribute, CSS-Eigenschaften, Selektoren und mehr – mit Beschreibung, Syntax und Beispielen.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" id="prism-light">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#results">Zum Inhalt springen</a>
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+      <span class="brand-name">HTML &amp; CSS<span class="brand-sub">Nachschlagewerk</span></span>
+    </div>
+
+    <div class="search">
+      <label for="q" class="visually-hidden">Suchen</label>
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Element, Attribut oder Eigenschaft suchen, z. B. flex, &lt;img&gt;, :hover" autocomplete="off" spellcheck="false">
+      <kbd class="search-key" aria-hidden="true">/</kbd>
+    </div>
+
+    <div class="top-actions">
+      <div class="lang-switch" role="radiogroup" aria-label="Sprache filtern">
+        <button type="button" role="radio" data-lang="all" aria-checked="true">Alle</button>
+        <button type="button" role="radio" data-lang="html" aria-checked="false">HTML</button>
+        <button type="button" role="radio" data-lang="css" aria-checked="false">CSS</button>
+      </div>
+      <button type="button" class="icon-btn" id="theme-toggle" aria-label="Farbschema wechseln" title="Hell / Dunkel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-label="Kategorien anzeigen" aria-expanded="false" aria-controls="sidebar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Kategorien"></nav>
+
+    <main id="results" tabindex="-1">
+      <div class="toolbar">
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="toolbar-actions">
+          <button type="button" class="text-btn" id="expand-all">Alle aufklappen</button>
+          <button type="button" class="text-btn" id="collapse-all">Alle zuklappen</button>
+        </div>
+      </div>
+      <div id="list"></div>
+      <p class="empty" id="empty" hidden>Keine Treffer. Prüfe die Schreibweise oder stelle den Filter oben auf „Alle“.</p>
+    </main>
+  </div>
+
+  <noscript><p class="empty">Diese Seite braucht JavaScript, um die Einträge anzuzeigen.</p></noscript>
+
+  <!-- Daten -->
+  <script src="data/html-elements.js"></script>
+  <script src="data/html-elements-media-forms.js"></script>
+  <script src="data/html-attributes.js"></script>
+  <script src="data/css-selectors.js"></script>
+  <script src="data/css-box-layout.js"></script>
+  <script src="data/css-flex-grid.js"></script>
+  <script src="data/css-typography-color.js"></script>
+  <script src="data/css-effects-motion.js"></script>
+  <script src="data/css-at-rules-values.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" data-manual></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
