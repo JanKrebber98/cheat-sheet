@@ -13,6 +13,8 @@
   --js-tint: #f6edd4;
   --ts: #2f5fb3;
   --ts-tint: #e2eaf7;
+  --java: #b8431f;
+  --java-tint: #f9e7e0;
   --focus: #2b59d9;
   --code-bg: #f3f5f9;
   --radius-s: 4px;
@@ -39,6 +41,8 @@
     --js-tint: #3a3218;
     --ts: #7aa7f0;
     --ts-tint: #1c2a44;
+    --java: #f08a63;
+    --java-tint: #3b2119;
     --focus: #8aa8ff;
     --code-bg: #171b25;
     color-scheme: dark;
@@ -59,6 +63,8 @@
   --js-tint: #3a3218;
   --ts: #7aa7f0;
   --ts-tint: #1c2a44;
+  --java: #f08a63;
+  --java-tint: #3b2119;
   --focus: #8aa8ff;
   --code-bg: #171b25;
   color-scheme: dark;
@@ -69,6 +75,7 @@
 [data-lang="css"] { --accent: var(--css); --accent-tint: var(--css-tint); }
 [data-lang="js"] { --accent: var(--js); --accent-tint: var(--js-tint); }
 [data-lang="ts"] { --accent: var(--ts); --accent-tint: var(--ts-tint); }
+[data-lang="java"] { --accent: var(--java); --accent-tint: var(--java-tint); }
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -111,7 +118,7 @@ body {
 .brand-mark {
   font-family: var(--mono); font-weight: 600; font-size: 15px;
   padding: 4px 7px; border-radius: var(--radius-s);
-  background: linear-gradient(90deg, var(--html) 25%, var(--css) 25% 50%, var(--js) 50% 75%, var(--ts) 75%);
+  background: linear-gradient(90deg, var(--html) 20%, var(--css) 20% 40%, var(--js) 40% 60%, var(--ts) 60% 80%, var(--java) 80%);
   color: #fff;
 }
 .brand-name { font-weight: 800; font-size: 17px; line-height: 1.1; letter-spacing: -0.01em; }
@@ -359,10 +366,13 @@ mark { background: color-mix(in srgb, #ffd23f 55%, transparent); color: inherit;
   .values td:first-child { white-space: normal; }
 }
 @media (max-width: 480px) {
-  .top { padding: 10px 12px; }
-  .top-actions { gap: 6px; }
+  .top { padding: 10px 12px; grid-template-columns: minmax(0, 1fr); }
+  .top-actions { gap: 6px; justify-content: space-between; }
   .lang-switch button { padding: 6px 7px; font-size: 13px; }
-  .brand-name { display: none; }
+  .brand { display: none; }
+}
+@media (max-width: 360px) {
+  .lang-switch button { padding: 6px 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

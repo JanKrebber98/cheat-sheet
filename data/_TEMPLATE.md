@@ -7,7 +7,7 @@ Alle Texte auf Deutsch. Code-Namen im Fließtext in Backticks: `display: flex`. 
 
 | Feld | Pflicht | Inhalt |
 |---|---|---|
-| `lang` | ja | `"html"`, `"css"`, `"js"` oder `"ts"` |
+| `lang` | ja | `"html"`, `"css"`, `"js"`, `"ts"` oder `"java"` |
 | `group` | ja | Kategorie, z. B. `"Textstruktur"`, `"Flexbox"` |
 | `name` | ja | So wie man es schreibt: `"<p>"`, `"href"`, `"display"`, `":hover"`, `"@media"`, `"rem"`, `"calc()"` |
 | `desc` | ja | Ein Satz, max. ~90 Zeichen: was es ist |
@@ -15,9 +15,10 @@ Alle Texte auf Deutsch. Code-Namen im Fließtext in Backticks: `display: flex`. 
 | `syntax` | nein | Allgemeine Schreibweise |
 | `values` | nein | `[["wert", "Bedeutung"], ...]` – mögliche Werte bzw. wichtige Attribute |
 | `example` | ja | Realistisches, kopierbares Beispiel |
-| `exampleLang` | nein | `"html"`, `"css"`, `"js"` oder `"ts"`, falls Beispielsprache ≠ `lang` (Prism-Hervorhebung) |
+| `exampleLang` | nein | `"html"`, `"css"`, `"js"`, `"ts"` oder `"java"`, falls Beispielsprache ≠ `lang` (Prism-Hervorhebung) |
 | `demo` | nein | HTML-Fragment (darf `<style>` enthalten, **kein** `<script>`), wird in der Live-Vorschau gerendert. Für alles Visuelle angeben. Bei `run: true` ist es das Markup, auf dem das Beispiel arbeitet. |
 | `run` | nein | Nur `lang: "js"`: `true` = `example` wird beim Klick auf „Code ausführen“ in einer Sandbox als `<script type="module">` ausgeführt, `console.log`-Ausgaben und Fehler erscheinen darunter. Top-level `await` geht, `import`/`export` nicht. Kein `alert`/`prompt`. Ausgaben mit `console.log` sichtbar machen. |
+| `nocheck` | nein | Nur `lang: "java"`: `true` = `scripts/check-java.js` überspringt das Beispiel. Nur für Code, der allein nicht kompilieren kann (`module-info.java`, mehrere Dateien, fremde Bibliotheken, Preview-Features). Eingebettete Shell- und XML-Beispiele bekommen `exampleLang` und werden ebenfalls übersprungen. |
 | `tip` | nein | Ein Praxistipp oder häufiger Fehler |
 | `keywords` | nein | Suchbegriffe (Synonyme, deutsch/englisch) |
 | `related` | nein | Namen verwandter Einträge, exakt wie deren `name` |
@@ -25,7 +26,7 @@ Alle Texte auf Deutsch. Code-Namen im Fließtext in Backticks: `display: flex`. 
 | `inherited` | nein | (CSS) `true`/`false` |
 | `display` | nein | (HTML) `"block"`, `"inline"`, `"inline-block"`, `"none"` … |
 | `deprecated` | nein | `true` bei veralteten Elementen/Eigenschaften |
-| `mdn` | nein | Link auf `https://developer.mozilla.org/de/docs/...` (bei TypeScript: `https://www.typescriptlang.org/docs/...`) |
+| `mdn` | nein | Link auf `https://developer.mozilla.org/de/docs/...` (bei TypeScript: `https://www.typescriptlang.org/docs/...`, bei Java: `https://docs.oracle.com/en/java/javase/25/...` oder `https://dev.java/...`) |
 
 ## Beispiel
 
