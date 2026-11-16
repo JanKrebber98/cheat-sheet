@@ -1,10 +1,12 @@
 (function () {
   'use strict';
 
-  var LANGS = ['html', 'css', 'js', 'ts', 'java', 'py'];
-  var LANG_LABEL = { html: 'HTML', css: 'CSS', js: 'JS', ts: 'TS', java: 'Java', py: 'Python' };
-  var LANG_NAME = { html: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript', java: 'Java', py: 'Python' };
-  var PRISM_LANG = { html: 'markup', css: 'css', js: 'javascript', ts: 'typescript', java: 'java', py: 'python', sh: 'bash', toml: 'toml' };
+  var LANGS = ['html', 'css', 'js', 'ts', 'java', 'py', 'sql'];
+  var LANG_LABEL = { html: 'HTML', css: 'CSS', js: 'JS', ts: 'TS', java: 'Java', py: 'Python', sql: 'SQL' };
+  var LANG_NAME = { html: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript', java: 'Java', py: 'Python', sql: 'SQL' };
+  var PRISM_LANG = { html: 'markup', css: 'css', js: 'javascript', ts: 'typescript', java: 'java', py: 'python', sql: 'sql', sh: 'bash', toml: 'toml' };
+  var DIALECTS = ['std', 'pg', 'mysql', 'mssql', 'sqlite'];
+  var DIALECT_NAME = { std: 'Standard', pg: 'PostgreSQL', mysql: 'MySQL', mssql: 'SQL Server', sqlite: 'SQLite' };
   var usedIds = {};
   var data = (window.CHEAT || []).map(function (e, i) {
     e.id = e.id || uniqueId(e.lang, e.name);
@@ -13,7 +15,8 @@
     return e;
   });
 
-  var state = { lang: 'all', query: '' };
+  var state = { lang: 'all', query: '', dialect: 'all' };
+  try { if (DIALECTS.indexOf(localStorage.getItem('sqlDialect')) >= 0) state.dialect = localStorage.getItem('sqlDialect'); } catch (err) {}
   var $ = function (s) { return document.querySelector(s); };
   var list = $('#list');
   var sidebar = $('#sidebar');
@@ -57,10 +60,43 @@
     return esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + q.length)) + '</mark>' + esc(text.slice(i + q.length));
   }
 
+  // ---------- SQL-Dialekte ----------
+  // Inhalt eines Dialekt-Tabs: eigenes Beispiel, { none } oder (weggelassen) das Standard-Beispiel.
+  function dialectOf(e, d) {
+    var ds = e.dialects;
+    if (!ds) return null;
+    var v = ds[d];
+    if (v && v.none) return { none: v.none, mdn: v.mdn };
+    var std = ds.std && !ds.std.none ? ds.std : null;
+    var own = !!(v && v.example);
+    var base = own ? v : std;
+    if (!base) return null;
+    return {
+      syntax: own ? v.syntax : std.syntax, example: base.example, exampleLang: base.exampleLang,
+      note: v && v.note, mdn: v && v.mdn, inherited: !own && d !== 'std'
+    };
+  }
+  function hasDialect(e, d) {
+    var v = dialectOf(e, d);
+    return !!(v && !v.none);
+  }
+  // Im SQL-Filter mit gewähltem Dialekt nur Einträge zeigen, die es dort gibt.
+  function visible(e) {
+    return !(state.lang === 'sql' && state.dialect !== 'all' && e.lang === 'sql' && e.dialects && !hasDialect(e, state.dialect));
+  }
+  function availability(e) {
+    if (!e.dialects) return '';
+    var real = DIALECTS.filter(function (d) { return d !== 'std'; });
+    var yes = real.filter(function (d) { return hasDialect(e, d); });
+    if (yes.length === real.length) return '';
+    if (!hasDialect(e, 'std') && yes.length <= 2) return 'nur ' + yes.map(function (d) { return DIALECT_NAME[d]; }).join(', ');
+    return 'nicht in ' + real.filter(function (d) { return yes.indexOf(d) < 0; }).map(function (d) { return DIALECT_NAME[d]; }).join(', ');
+  }
+
   function groupsOf(lang) {
     var seen = {}, out = [];
     data.forEach(function (e) {
-      if (e.lang !== lang) return;
+      if (e.lang !== lang || !visible(e)) return;
       if (!seen[e.group]) { seen[e.group] = { name: e.group, items: [] }; out.push(seen[e.group]); }
       seen[e.group].items.push(e);
     });
@@ -106,7 +142,7 @@
 
     if (q) {
       // Suchergebnisse: nach Relevanz sortiert, ohne Gruppen
-      var hits = data.filter(function (e) { return langs.indexOf(e.lang) >= 0; })
+      var hits = data.filter(function (e) { return langs.indexOf(e.lang) >= 0 && visible(e); })
         .map(function (e) { return { e: e, s: score(e, q) }; })
         .filter(function (x) { return x.s > 0; })
         .sort(function (a, b) { return b.s - a.s || a.e._order - b.e._order; });
@@ -144,7 +180,8 @@
     return '<details class="entry" id="' + e.id + '" data-lang="' + e.lang + '">' +
       '<summary>' +
         '<span class="entry-name">' + highlight(e.name, q) + '</span>' +
-        '<span class="entry-desc">' + (showLang ? '<span class="lang-tag" data-lang="' + e.lang + '">' + LANG_LABEL[e.lang] + '</span> ' : '') + inline(e.desc) + '</span>' +
+        '<span class="entry-desc">' + (showLang ? '<span class="lang-tag" data-lang="' + e.lang + '">' + LANG_LABEL[e.lang] + '</span> ' : '') + inline(e.desc) +
+          (availability(e) ? ' <span class="dialect-avail">' + esc(availability(e)) + '</span>' : '') + '</span>' +
         '<span class="chev" aria-hidden="true"></span>' +
       '</summary>' +
     '</details>';
@@ -167,7 +204,7 @@
     if (e.display) badges.push('<span class="badge">Darstellung: ' + esc(e.display) + '</span>');
     if (badges.length) h += '<div class="badges">' + badges.join('') + '</div>';
 
-    if (e.syntax) h += '<h3>Syntax</h3>' + codeBlock(e.syntax, e.lang);
+    if (e.syntax && !e.dialects) h += '<h3>Syntax</h3>' + codeBlock(e.syntax, e.lang);
 
     if (e.values && e.values.length) {
       h += '<h3>' + (e.lang === 'html' && e.group !== 'Globale Attribute' ? 'Attribute &amp; Werte' : 'Werte') + '</h3><table class="values"><tbody>';
@@ -177,7 +214,8 @@
       h += '</tbody></table>';
     }
 
-    if (e.example) {
+    if (e.dialects) h += dialectTabs(e);
+    else if (e.example) {
       h += '<h3>Beispiel</h3>' + codeBlock(e.example, e.exampleLang || e.lang);
     }
     if (e.run) {
@@ -194,10 +232,54 @@
         return t ? '<a href="#' + t.id + '">' + esc(r) + '</a>' : '<code>' + esc(r) + '</code>';
       }).join(', ') + '</span>');
     }
-    if (e.mdn) foot.push('<a href="' + esc(e.mdn) + '" target="_blank" rel="noopener">' + (/typescriptlang\.org/.test(e.mdn) ? 'TypeScript-Dokumentation' : /docs\.oracle\.com|dev\.java/.test(e.mdn) ? 'Java-Dokumentation' : /docs\.python\.org/.test(e.mdn) ? 'Python-Dokumentation' : 'MDN-Dokumentation') + '</a>');
+    if (e.mdn) foot.push(docLink(e.mdn));
     if (foot.length) h += '<div class="entry-foot">' + foot.join('') + '</div>';
 
     return h + '</div>';
+  }
+
+  function docLink(url) {
+    var label = /typescriptlang\.org/.test(url) ? 'TypeScript-Dokumentation' : /docs\.oracle\.com|dev\.java/.test(url) ? 'Java-Dokumentation'
+      : /docs\.python\.org/.test(url) ? 'Python-Dokumentation' : /postgresql\.org/.test(url) ? 'PostgreSQL-Dokumentation'
+      : /sqlite\.org/.test(url) ? 'SQLite-Dokumentation' : /dev\.mysql\.com/.test(url) ? 'MySQL-Dokumentation'
+      : /learn\.microsoft\.com/.test(url) ? 'SQL-Server-Dokumentation' : 'MDN-Dokumentation';
+    return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + label + '</a>';
+  }
+
+  // Ein Tab je Dialekt; offen ist der gewählte Dialekt, sonst Standard bzw. der erste vorhandene.
+  function dialectTabs(e) {
+    var first = state.dialect !== 'all' ? state.dialect : hasDialect(e, 'std') ? 'std'
+      : DIALECTS.filter(function (d) { return hasDialect(e, d); })[0] || 'std';
+    var tabs = '', panels = '';
+    DIALECTS.forEach(function (d) {
+      var v = dialectOf(e, d) || { none: 'Kein Beispiel.' };
+      var on = d === first;
+      var tid = e.id + '--t-' + d, pid = e.id + '--p-' + d;
+      tabs += '<button type="button" role="tab" id="' + tid + '" aria-controls="' + pid + '" aria-selected="' + on + '" tabindex="' + (on ? 0 : -1) + '"' +
+        ' data-d="' + d + '"' + (v.none ? ' class="is-none" title="Gibt es in ' + DIALECT_NAME[d] + ' nicht"' : '') + '>' + DIALECT_NAME[d] + '</button>';
+      var p = '';
+      if (v.none) {
+        p += '<p class="dialect-none"><strong>' + (d === 'std' ? 'Nicht im SQL-Standard.' : 'Gibt es in ' + DIALECT_NAME[d] + ' nicht.') + '</strong> ' + inline(v.none) + '</p>';
+      } else {
+        if (v.inherited) p += '<p class="dialect-same">Wie Standard-SQL</p>';
+        if (v.note) p += '<p class="dialect-note">' + inline(v.note) + '</p>';
+        if (v.syntax) p += '<h4>Syntax</h4>' + codeBlock(v.syntax, 'sql');
+        p += '<h4>Beispiel</h4>' + codeBlock(v.example, v.exampleLang || 'sql');
+      }
+      if (v.mdn) p += '<p class="dialect-doc">' + docLink(v.mdn) + '</p>';
+      panels += '<div role="tabpanel" class="dialect-panel" id="' + pid + '" aria-labelledby="' + tid + '"' + (on ? '' : ' hidden') + '>' + p + '</div>';
+    });
+    return '<h3>Syntax &amp; Beispiel</h3><div class="dialects"><div class="dialect-tabs" role="tablist" aria-label="SQL-Dialekt">' + tabs + '</div>' + panels + '</div>';
+  }
+
+  function selectTab(tab) {
+    var box = tab.closest('.dialects');
+    box.querySelectorAll('[role=tab]').forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
   }
 
   var byName = null;
@@ -257,6 +339,8 @@
   }, true);
 
   list.addEventListener('click', function (ev) {
+    var tab = ev.target.closest('.dialect-tabs [role=tab]');
+    if (tab) { selectTab(tab); return; }
     var copy = ev.target.closest('.copy-btn');
     if (copy) {
       var text = copy.parentNode.querySelector('code').textContent;
@@ -292,6 +376,17 @@
     }
   });
 
+  list.addEventListener('keydown', function (ev) {
+    var tab = ev.target.closest('.dialect-tabs [role=tab]');
+    if (!tab || ['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf(ev.key) < 0) return;
+    var all = Array.prototype.slice.call(tab.parentNode.children);
+    var i = all.indexOf(tab);
+    var n = ev.key === 'Home' ? 0 : ev.key === 'End' ? all.length - 1 : (i + (ev.key === 'ArrowRight' ? 1 : -1) + all.length) % all.length;
+    ev.preventDefault();
+    selectTab(all[n]);
+    all[n].focus();
+  });
+
   function fallbackCopy(text) {
     var ta = document.createElement('textarea');
     ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
@@ -320,9 +415,34 @@
       document.querySelectorAll('.lang-switch button').forEach(function (x) {
         x.setAttribute('aria-checked', String(x === b));
       });
+      dialectBar.hidden = state.lang !== 'sql';
+      renderSidebar(); renderList();
+      b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+  });
+
+  var dialectBar = $('#dialect-bar');
+  function markDialect() {
+    dialectBar.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', String(x.dataset.dialect === state.dialect)); });
+  }
+  dialectBar.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.dialect = b.dataset.dialect;
+      try { localStorage.setItem('sqlDialect', state.dialect); } catch (err) {}
+      markDialect();
       renderSidebar(); renderList();
     });
   });
+  markDialect();
+
+  // Auf schmalen Bildschirmen scrollt die Sprachleiste; ein Verlauf rechts zeigt, dass noch Knöpfe folgen.
+  var langBar = $('.lang-switch');
+  function updateLangFade() {
+    langBar.classList.toggle('is-clipped', langBar.scrollWidth - langBar.clientWidth - langBar.scrollLeft > 1);
+  }
+  langBar.addEventListener('scroll', updateLangFade, { passive: true });
+  window.addEventListener('resize', updateLangFade);
+  updateLangFade();
 
   $('#expand-all').addEventListener('click', function () {
     list.querySelectorAll('details.entry').forEach(function (d) { d.open = true; });

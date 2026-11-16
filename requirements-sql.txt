@@ -1,0 +1,5 @@
+# Datenbank-Treiber für scripts/check-sql.js (getestet mit diesen Versionen)
+# Installation: python -m venv .venv-sql  und dann  .venv-sql\Scripts\pip install -r requirements-sql.txt
+psycopg[binary]>=3.3.9   # PostgreSQL
+PyMySQL>=1.2.4           # MySQL
+pymssql>=2.4.6           # SQL Server

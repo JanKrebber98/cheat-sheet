@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cheat Sheet</title>
-  <meta name="description" content="Nachschlagewerk für HTML, CSS, JavaScript, TypeScript, Java und Python – mit Beschreibung, Syntax und Beispielen.">
+  <meta name="description" content="Nachschlagewerk für HTML, CSS, JavaScript, TypeScript, Java, Python und SQL – mit Beschreibung, Syntax und Beispielen.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
     <div class="search">
       <label for="q" class="visually-hidden">Suchen</label>
       <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Suchen, z. B. flex, &lt;img&gt;, :hover, map(), Partial, record, f-String" autocomplete="off" spellcheck="false">
+      <input id="q" type="search" placeholder="Suchen, z. B. flex, &lt;img&gt;, :hover, map(), Partial, record, f-String, JOIN" autocomplete="off" spellcheck="false">
       <kbd class="search-key" aria-hidden="true">/</kbd>
     </div>
 
@@ -39,6 +39,7 @@
         <button type="button" role="radio" data-lang="ts" aria-checked="false" title="TypeScript">TS</button>
         <button type="button" role="radio" data-lang="java" aria-checked="false">Java</button>
         <button type="button" role="radio" data-lang="py" aria-checked="false" title="Python">Py</button>
+        <button type="button" role="radio" data-lang="sql" aria-checked="false">SQL</button>
       </div>
       <button type="button" class="icon-btn" id="theme-toggle" aria-label="Farbschema wechseln" title="Hell / Dunkel">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -58,6 +59,17 @@
         <div class="toolbar-actions">
           <button type="button" class="text-btn" id="expand-all">Alle aufklappen</button>
           <button type="button" class="text-btn" id="collapse-all">Alle zuklappen</button>
+        </div>
+      </div>
+      <div class="dialect-bar" id="dialect-bar" hidden>
+        <span class="dialect-label" id="dialect-label">Dialekt</span>
+        <div class="dialect-switch" role="radiogroup" aria-labelledby="dialect-label">
+          <button type="button" role="radio" data-dialect="all" aria-checked="true">Alle</button>
+          <button type="button" role="radio" data-dialect="std" aria-checked="false" title="ISO-Standard-SQL">Standard</button>
+          <button type="button" role="radio" data-dialect="pg" aria-checked="false">PostgreSQL</button>
+          <button type="button" role="radio" data-dialect="mysql" aria-checked="false" title="MySQL / MariaDB">MySQL</button>
+          <button type="button" role="radio" data-dialect="mssql" aria-checked="false" title="Microsoft SQL Server (T-SQL)">SQL Server</button>
+          <button type="button" role="radio" data-dialect="sqlite" aria-checked="false">SQLite</button>
         </div>
       </div>
       <div id="list"></div>
@@ -94,11 +106,18 @@
   <script src="data/python-functions-oop.js"></script>
   <script src="data/python-stdlib.js"></script>
   <script src="data/python-advanced.js"></script>
+  <script src="data/sql-basics.js"></script>
+  <script src="data/sql-queries.js"></script>
+  <script src="data/sql-functions.js"></script>
+  <script src="data/sql-ddl.js"></script>
+  <script src="data/sql-dml-transactions.js"></script>
+  <script src="data/sql-dialects.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" data-manual></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-toml.min.js"></script>
   <script src="assets/app.js"></script>
