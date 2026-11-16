@@ -7,7 +7,7 @@ Alle Texte auf Deutsch. Code-Namen im Fließtext in Backticks: `display: flex`. 
 
 | Feld | Pflicht | Inhalt |
 |---|---|---|
-| `lang` | ja | `"html"`, `"css"`, `"js"`, `"ts"`, `"java"` oder `"py"` |
+| `lang` | ja | `"html"`, `"css"`, `"js"`, `"ts"`, `"java"`, `"py"` oder `"sql"` |
 | `group` | ja | Kategorie, z. B. `"Textstruktur"`, `"Flexbox"` |
 | `name` | ja | So wie man es schreibt: `"<p>"`, `"href"`, `"display"`, `":hover"`, `"@media"`, `"rem"`, `"calc()"` |
 | `desc` | ja | Ein Satz, max. ~90 Zeichen: was es ist |
@@ -15,10 +15,11 @@ Alle Texte auf Deutsch. Code-Namen im Fließtext in Backticks: `display: flex`. 
 | `syntax` | nein | Allgemeine Schreibweise |
 | `values` | nein | `[["wert", "Bedeutung"], ...]` – mögliche Werte bzw. wichtige Attribute |
 | `example` | ja | Realistisches, kopierbares Beispiel |
-| `exampleLang` | nein | `"html"`, `"css"`, `"js"`, `"ts"`, `"java"`, `"py"`, `"sh"` (Shell) oder `"toml"`, falls Beispielsprache ≠ `lang` (Prism-Hervorhebung) |
+| `exampleLang` | nein | `"html"`, `"css"`, `"js"`, `"ts"`, `"java"`, `"py"`, `"sql"`, `"sh"` (Shell) oder `"toml"`, falls Beispielsprache ≠ `lang` (Prism-Hervorhebung) |
 | `demo` | nein | HTML-Fragment (darf `<style>` enthalten, **kein** `<script>`), wird in der Live-Vorschau gerendert. Für alles Visuelle angeben. Bei `run: true` ist es das Markup, auf dem das Beispiel arbeitet. |
 | `run` | nein | Nur `lang: "js"`: `true` = `example` wird beim Klick auf „Code ausführen“ in einer Sandbox als `<script type="module">` ausgeführt, `console.log`-Ausgaben und Fehler erscheinen darunter. Top-level `await` geht, `import`/`export` nicht. Kein `alert`/`prompt`. Ausgaben mit `console.log` sichtbar machen. |
-| `nocheck` | nein | Nur `lang: "java"`: `true` = `scripts/check-java.js` überspringt das Beispiel. Nur für Code, der allein nicht kompilieren kann (`module-info.java`, mehrere Dateien, fremde Bibliotheken, Preview-Features). Eingebettete Shell- und XML-Beispiele bekommen `exampleLang` und werden ebenfalls übersprungen. Bei `lang: "py"` entsprechend für `scripts/check-python.js`: nur für Code, der Netzwerk, fremde Pakete (`requests`, `pytest`), Benutzereingaben oder mehrere Dateien braucht. |
+| `nocheck` | nein | Nur `lang: "java"`: `true` = `scripts/check-java.js` überspringt das Beispiel. Nur für Code, der allein nicht kompilieren kann (`module-info.java`, mehrere Dateien, fremde Bibliotheken, Preview-Features). Eingebettete Shell- und XML-Beispiele bekommen `exampleLang` und werden ebenfalls übersprungen. Bei `lang: "py"` entsprechend für `scripts/check-python.js`: nur für Code, der Netzwerk, fremde Pakete (`requests`, `pytest`), Benutzereingaben oder mehrere Dateien braucht. Bei `lang: "sql"` steht `nocheck` im jeweiligen Dialekt (siehe `dialects`). |
+| `dialects` | bei SQL | Nur `lang: "sql"`: Syntax und Beispiel je Dialekt, angezeigt als Tabs. Ersetzt `syntax`, `example`, `exampleLang` und `nocheck` oben. Schlüssel `std` (ISO-Standard, Pflicht), `pg`, `mysql`, `mssql`, `sqlite`. Wert je Dialekt: `{ syntax, example, note, mdn, nocheck, exampleLang }` (eigene Variante), `{ note }` (wie Standard plus Hinweis), `{ none: 'Alternative …' }` (gibt es dort nicht) oder weglassen (wie Standard). `scripts/check-sql.js` führt jede Variante in PostgreSQL, MySQL, SQL Server bzw. SQLite aus (Standard in PostgreSQL; geerbte Beispiele auch im erbenden Dialekt) und vergleicht Ergebniskommentare: Kommentarblock direkt unter der Abfrage, erste Zeile die Spaltennamen, Zellen mit `\|` getrennt, `-- …` kürzt ab. Ohne `dialects` nur Einträge, deren Beispiel in einer anderen Sprache ist (`exampleLang`). |
 | `tip` | nein | Ein Praxistipp oder häufiger Fehler |
 | `keywords` | nein | Suchbegriffe (Synonyme, deutsch/englisch) |
 | `related` | nein | Namen verwandter Einträge, exakt wie deren `name` |
@@ -26,7 +27,7 @@ Alle Texte auf Deutsch. Code-Namen im Fließtext in Backticks: `display: flex`. 
 | `inherited` | nein | (CSS) `true`/`false` |
 | `display` | nein | (HTML) `"block"`, `"inline"`, `"inline-block"`, `"none"` … |
 | `deprecated` | nein | `true` bei veralteten Elementen/Eigenschaften |
-| `mdn` | nein | Link auf `https://developer.mozilla.org/de/docs/...` (bei TypeScript: `https://www.typescriptlang.org/docs/...`, bei Java: `https://docs.oracle.com/en/java/javase/25/...` oder `https://dev.java/...`, bei Python: `https://docs.python.org/3/...`) |
+| `mdn` | nein | Link auf `https://developer.mozilla.org/de/docs/...` (bei TypeScript: `https://www.typescriptlang.org/docs/...`, bei Java: `https://docs.oracle.com/en/java/javase/25/...` oder `https://dev.java/...`, bei Python: `https://docs.python.org/3/...`, bei SQL: `https://www.postgresql.org/docs/current/...`, `https://sqlite.org/...`, `https://dev.mysql.com/doc/...` oder `https://learn.microsoft.com/...sql...`) |
 
 ## Beispiel
 
