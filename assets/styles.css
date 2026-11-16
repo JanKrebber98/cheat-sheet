@@ -15,6 +15,8 @@
   --ts-tint: #e2eaf7;
   --java: #b8431f;
   --java-tint: #f9e7e0;
+  --py: #6a45b0;
+  --py-tint: #ece6f7;
   --focus: #2b59d9;
   --code-bg: #f3f5f9;
   --radius-s: 4px;
@@ -43,6 +45,8 @@
     --ts-tint: #1c2a44;
     --java: #f08a63;
     --java-tint: #3b2119;
+    --py: #b59af2;
+    --py-tint: #2b2240;
     --focus: #8aa8ff;
     --code-bg: #171b25;
     color-scheme: dark;
@@ -65,6 +69,8 @@
   --ts-tint: #1c2a44;
   --java: #f08a63;
   --java-tint: #3b2119;
+  --py: #b59af2;
+  --py-tint: #2b2240;
   --focus: #8aa8ff;
   --code-bg: #171b25;
   color-scheme: dark;
@@ -76,6 +82,7 @@
 [data-lang="js"] { --accent: var(--js); --accent-tint: var(--js-tint); }
 [data-lang="ts"] { --accent: var(--ts); --accent-tint: var(--ts-tint); }
 [data-lang="java"] { --accent: var(--java); --accent-tint: var(--java-tint); }
+[data-lang="py"] { --accent: var(--py); --accent-tint: var(--py-tint); }
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -118,7 +125,7 @@ body {
 .brand-mark {
   font-family: var(--mono); font-weight: 600; font-size: 15px;
   padding: 4px 7px; border-radius: var(--radius-s);
-  background: linear-gradient(90deg, var(--html) 20%, var(--css) 20% 40%, var(--js) 40% 60%, var(--ts) 60% 80%, var(--java) 80%);
+  background: linear-gradient(90deg, var(--html) 16.66%, var(--css) 16.66% 33.33%, var(--js) 33.33% 50%, var(--ts) 50% 66.66%, var(--java) 66.66% 83.33%, var(--py) 83.33%);
   color: #fff;
 }
 .brand-name { font-weight: 800; font-size: 17px; line-height: 1.1; letter-spacing: -0.01em; }

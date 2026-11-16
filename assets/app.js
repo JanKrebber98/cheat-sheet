@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  var LANGS = ['html', 'css', 'js', 'ts', 'java'];
-  var LANG_LABEL = { html: 'HTML', css: 'CSS', js: 'JS', ts: 'TS', java: 'Java' };
-  var LANG_NAME = { html: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript', java: 'Java' };
-  var PRISM_LANG = { html: 'markup', css: 'css', js: 'javascript', ts: 'typescript', java: 'java' };
+  var LANGS = ['html', 'css', 'js', 'ts', 'java', 'py'];
+  var LANG_LABEL = { html: 'HTML', css: 'CSS', js: 'JS', ts: 'TS', java: 'Java', py: 'Python' };
+  var LANG_NAME = { html: 'HTML', css: 'CSS', js: 'JavaScript', ts: 'TypeScript', java: 'Java', py: 'Python' };
+  var PRISM_LANG = { html: 'markup', css: 'css', js: 'javascript', ts: 'typescript', java: 'java', py: 'python', sh: 'bash', toml: 'toml' };
   var usedIds = {};
   var data = (window.CHEAT || []).map(function (e, i) {
     e.id = e.id || uniqueId(e.lang, e.name);
@@ -194,7 +194,7 @@
         return t ? '<a href="#' + t.id + '">' + esc(r) + '</a>' : '<code>' + esc(r) + '</code>';
       }).join(', ') + '</span>');
     }
-    if (e.mdn) foot.push('<a href="' + esc(e.mdn) + '" target="_blank" rel="noopener">' + (/typescriptlang\.org/.test(e.mdn) ? 'TypeScript-Dokumentation' : /docs\.oracle\.com|dev\.java/.test(e.mdn) ? 'Java-Dokumentation' : 'MDN-Dokumentation') + '</a>');
+    if (e.mdn) foot.push('<a href="' + esc(e.mdn) + '" target="_blank" rel="noopener">' + (/typescriptlang\.org/.test(e.mdn) ? 'TypeScript-Dokumentation' : /docs\.oracle\.com|dev\.java/.test(e.mdn) ? 'Java-Dokumentation' : /docs\.python\.org/.test(e.mdn) ? 'Python-Dokumentation' : 'MDN-Dokumentation') + '</a>');
     if (foot.length) h += '<div class="entry-foot">' + foot.join('') + '</div>';
 
     return h + '</div>';
